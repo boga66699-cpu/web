@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chào mừng Ngày Phụ Nữ Việt Nam 20-10</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body, html { height: 100%; scroll-behavior: smooth; }
+
+    section.scene {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex-direction: column;
+      color: #fff;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+      z-index: 1;
+    }
+    section.scene.active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    /* Hiệu ứng fade in cho nội dung */
+    .fade-in {
+      animation: fadeIn 2.5s ease forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CẢNH LOADING - Hiệu ứng loading bar */
+    #scene0 {
+      background: linear-gradient(to bottom right, #ff69b4, #ffd700);
+    }
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+    }
+    .loading-gift {
+      font-size: 4em;
+      animation: bounceGift 1.5s ease-in-out infinite;
+    }
+    @keyframes bounceGift {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .loading-text {
+      font-size: 1.5em;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .loading-bar {
+      width: 300px;
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%;
+      background: linear-gradient(to right, #ff1493, #ff69b4, #ffb6c1);
+      width: 0%;
+      animation: progressBar 3s ease forwards;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,20,147,0.6);
+    }
+    @keyframes progressBar {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    /* Hoa rơi nhẹ, đa dạng hơn */
+    .petal {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: rgba(255, 105, 180, 0.8);
+      border-radius: 50% 50% 0 50%;
+      animation: fall 8s linear infinite;
+      left: calc(100vw * var(--left));
+      animation-delay: calc(5s * var(--delay));
+      transform: scale(var(--scale)) rotate(var(--rotate));
+    }
+    @keyframes fall {
+      0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Văn bản với shadow mạnh hơn để dễ đọc */
+    h1 { font-size: 3.5em; margin-bottom: 20px; text-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+    p { max-width: 900px; font-size: 1.3em; line-height: 1.8; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+
+    /* Gradient màu sắc rực rỡ, hài hòa hơn (tăng độ bão hòa) */
+    #scene1 {
+      background: linear-gradient(to bottom right, #ff69b4, #ffd700);
+    }
+    #scene2 {
+      background: linear-gradient(to top right, #ff1493, #ffa500);
+    }
+    #scene3 {
+      background: linear-gradient(to bottom left, #db7093, #ffcc00);
+    }
+    #scene4 {
+      background: linear-gradient(to right, #c71585, #f4a460);
+      color: #fff;
+    }
+    #scene4 h1 { color: #ff4500; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 { font-size: 2.5em; }
+      p { font-size: 1em; }
+      .loading-gift { font-size: 3em; }
+      .loading-text { font-size: 1.2em; }
+      .loading-bar { width: 250px; }
+    }
+
+    /* Styles for buttons in scene4 */
+    .button-container {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2em;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .btn:hover {
+      background: #ff1493;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 400px;
+      text-align: left;
+      color: #333;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    input, select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .auth-btn {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .auth-btn:hover {
+      background: #ff1493;
+    }
+    .switch-auth {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* Mini game styles */
+    #minigame {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom right, #ff69b4, #ffd700);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    .user-count {
+      font-size: 1.5em;
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .winner-info {
+      font-size: 1.5em;
+      margin-bottom: 15px;
+      color: #ff4500;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 60px);
+      grid-gap: 15px;
+      margin-bottom: 30px;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .square {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #fff, #ffb6c1);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      color: #ff1493;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+    .square:hover {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, #ffb6c1, #ff69b4);
+    }
+    .square.opened {
+      background: linear-gradient(135deg, #ddd, #ccc);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      color: #999;
+    }
+    #dialog {
+      display: none;
+      position: fixed;
+      z-index: 11;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      width: 85%;
+      max-width: 550px;
+      color: #333;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    #dialog-content {
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+    #dialog-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      cursor: pointer;
+      font-size: 24px;
+      color: #aaa;
+    }
+    #dialog-close:hover {
+      color: #000;
+    }
+    .back-btn {
+      padding: 12px 25px;
+      background: #ff1493;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2em;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background 0.3s ease;
+    }
+    .back-btn:hover {
+      background: #c71585;
+    }
+
+    /* Expired message */
+    #expired-message {
+      display: none;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: #fff;
+      color: #333;
+      font-size: 1.5em;
+      padding: 20px;
+    }
+
+    /* User list modal */
+    #user-list-modal {
+      display: none;
+      position: fixed;
+      z-index: 11;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    #user-list-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      color: #333;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f2f2f2;
+    }
+    #user-list-close {
+      float: right;
+      cursor: pointer;
+      font-size: 24px;
+      color: #aaa;
+    }
+    #user-list-close:hover {
+      color: #000;
+    }
+    #show-users-btn {
+      padding: 10px 20px;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
+    #show-users-btn:hover {
+      background: #ff1493;
+    }
+
+    /* Instructions dialog */
+    #instructions-dialog {
+      display: none;
+      position: fixed;
+      z-index: 11;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      color: #333;
+      text-align: left;
+    }
+    #instructions-content {
+      margin-bottom: 10px;
+    }
+    #instructions-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      color: #aaa;
+    }
+    #instructions-close:hover {
+      color: #000;
+    }
+
+    /* Continue button style */
+    #continue-btn {
+      display: none;
+      padding: 10px 20px;
+      background: #ff1493;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+    #continue-btn:hover {
+      background: #c71585;
+    }
+  </style>
+</head>
+<body>
+
+<div id="expired-message">
+  <p>Trang web chỉ hoạt động vào ngày 20 tháng 10. Xin lỗi vì sự bất tiện này!</p>
+</div>
+
+<!-- CẢNH 0: LOADING -->
+<section id="scene0" class="scene active">
+  <div class="loading-container">
+    <div class="loading-gift">🎁</div>
+    <div class="loading-text">Đang chuẩn bị món quà nhỏ...</div>
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+    <button id="continue-btn">Tiếp tục</button>
+  </div>
+</section>
+
+<!-- CẢNH 1: MỞ ĐẦU -->
+<section id="scene1" class="scene">
+  <h1 class="fade-in">🌸 Chào mừng Ngày Phụ Nữ Việt Nam 20-10 🌸</h1>
+  <p class="fade-in" style="animation-delay: 0.5s;">Hôm nay, chúng ta cùng gửi lời chúc tốt đẹp nhất đến những người phụ nữ — những bông hoa tỏa hương giữa cuộc đời.</p>
+</section>
+
+<!-- CẢNH 2: Ý NGHĨA NGÀY 20/10 -->
+<section id="scene2" class="scene">
+  <h1 class="fade-in">💖 Ý nghĩa ngày 20-10 💖</h1>
+  <p class="fade-in" style="animation-delay: 1s;">
+    Ngày 20/10 là dịp đặc biệt để tôn vinh phụ nữ Việt Nam – những người mẹ, người vợ, người chị đã cống hiến và hy sinh thầm lặng.  
+    Họ là biểu tượng của tình yêu thương, sự kiên cường và lòng nhân hậu.  
+    Mỗi người phụ nữ đều mang trong mình vẻ đẹp riêng – từ sự mạnh mẽ trong cuộc sống đến nét dịu dàng trong từng cử chỉ.  
+    Hãy trân trọng và dành cho họ những lời chúc ngọt ngào, vì chính họ làm cho cuộc đời này thêm rực rỡ. 🌷
+  </p>
+</section>
+
+<!-- CẢNH 3: HÌNH ẢNH PHỤ NỮ VIỆT -->
+<section id="scene3" class="scene">
+  <h1 class="fade-in">Hình ảnh đẹp của Phụ Nữ Việt Nam</h1>
+  <img src="https://images.pexels.com/photos/33603012/pexels-photo-33603012.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Phụ nữ Việt Nam mặc áo dài truyền thống" 
+       style="width:60%; max-width:600px; border-radius:20px; margin-top:20px; box-shadow:0 0 30px rgba(255,255,255,0.8);">
+  <p class="fade-in" style="margin-top:20px; animation-delay: 1s;">
+    Dáng áo dài dịu dàng, nụ cười hiền hậu – hình ảnh người phụ nữ Việt Nam luôn là biểu tượng của sự nhân ái và hy sinh.  
+    Họ mang trong tim lòng tự hào dân tộc và tinh thần bất khuất, vượt qua mọi khó khăn để vun đắp cho hạnh phúc và tương lai.
+  </p>
+</section>
+
+<!-- CẢNH 4: LỜI CHÚC KẾT -->
+<section id="scene4" class="scene">
+  <h1 class="fade-in">🌼 Lời chúc gửi đến phụ nữ Việt 🌼</h1>
+  <p class="fade-in" style="animation-delay:1s;">
+    Chúc tất cả phụ nữ Việt Nam luôn xinh đẹp, mạnh mẽ và hạnh phúc.  
+    Dù là ở bất kỳ vai trò nào – người mẹ, người vợ hay người bạn –  
+    các bạn luôn xứng đáng nhận được sự yêu thương và trân trọng.  
+    Hãy luôn tự tin, yêu đời và tỏa sáng như những đóa hoa rực rỡ trong ngày đặc biệt này! 💐
+  </p>
+  <div class="button-container fade-in" style="animation-delay:1.5s;">
+    <button class="btn" id="replay-btn">Xem lại khoảnh khắc</button>
+    <button class="btn" id="minigame-btn">Mini game</button>
+  </div>
+  <audio autoplay loop>
+    <source src="https://files.catbox.moe/d9by6u.mp3" type="audio/mpeg">
+  </audio>
+</section>
+
+<!-- Modal for Auth -->
+<div id="auth-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="auth-close">&times;</span>
+    <h2 id="auth-title">Đăng nhập</h2>
+    <form id="auth-form">
+      <label for="name">Họ và tên:</label>
+      <input type="text" id="name" required>
+      <label for="year">Năm sinh:</label>
+      <input type="number" id="year" required min="1900" max="2025">
+      <div id="gender-container" style="display:none;">
+        <label for="gender">Giới tính:</label>
+        <select id="gender">
+          <option value="female" selected>Nữ</option>
+          <option value="male">Nam</option>
+          <option value="other">Khác</option>
+        </select>
+      </div>
+      <button type="submit" class="auth-btn" id="auth-submit">Đăng nhập</button>
+    </form>
+    <div class="switch-auth">
+      <a href="#" id="switch-link">Vui lòng đăng ký tài khoản mới</a>
+    </div>
+  </div>
+</div>
+
+<!-- Mini Game Section -->
+<section id="minigame">
+  <div class="user-count">Số lượng người tham gia: <span id="user-count">0</span></div>
+  <div class="winner-info" id="winner-info"></div>
+  <button id="show-users-btn">Danh sách người tham gia</button>
+  <div class="grid" id="grid"></div>
+  <button class="back-btn" id="back-to-scenes">Quay lại</button>
+</section>
+
+<!-- Dialog for Square Content -->
+<div id="dialog">
+  <span id="dialog-close">&times;</span>
+  <p id="dialog-content"></p>
+</div>
+
+<!-- Instructions Dialog -->
+<div id="instructions-dialog">
+  <span id="instructions-close">&times;</span>
+  <div id="instructions-content">
+    <h2>Hướng dẫn chơi Mini Game</h2>
+    <p>Chào mừng bạn đến với Mini Game chúc mừng ngày 20/10!</p>
+    <p><strong>Quy luật chơi:</strong></p>
+    <ul>
+      <li>Có 30 ô vuông trên lưới.</li>
+      <li>Bạn chỉ được mở <strong>1 ô vuông duy nhất</strong> cho mỗi tài khoản.</li>
+      <li>Mỗi ô chứa một lời chúc ngẫu nhiên về ngày Phụ nữ Việt Nam 20/10 dành cho các bạn nữ 12A6 và các cô giáo.</li>
+      <li>Trong số đó, có <strong>1 ô đặc biệt</strong> chứa phần quà: bí mật tiền mặt💵</li>
+      <li>Sau khi mở, bạn không thể mở thêm ô nào nữa.</li>
+      <li>Nếu trúng quà, tài khoản của bạn sẽ được ghim và hiển thị là người nhận quà.</li>
+      <li>Chỉ có 30 người tham gia tối đa. Mỗi thiết bị chỉ đăng ký được 1 tài khoản.</li>
+    </ul>
+    <p>Chúc bạn may mắn! 🎉</p>
+  </div>
+</div>
+
+<!-- User List Modal -->
+<div id="user-list-modal" class="modal">
+  <div id="user-list-content">
+    <span id="user-list-close">&times;</span>
+    <h2>Danh sách người tham gia</h2>
+    <table id="user-table">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Họ và tên</th>
+          <th>Năm sinh</th>
+          <th>Phần thưởng</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<audio id="music1" loop>
+  <source src="https://rr2---sn-8qj-8ppe7.googlevideo.com/videoplayback?expire=1760982779&ei=myL2aLu6LbiAvcAP1Zi_-QQ&ip=222.252.18.89&id=o-AK9gyiigmfVIo3hMAGglHPLUtIHLL90h-hYrzgY3T46V&itag=140&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=ATw7iSX0EuFePCfFqODjYct7lthrjgzN1QctjfWdXkpooy2X9cEPV-aBfEL0D3l7TjQLWHXs2Q31r5T-&spc=hcYD5ZNZhITOzjQtGpvv-rhrhPJGP9_nYur7KPpuECg3Tv7TPp-rNOtS&vprv=1&svpuc=1&mime=audio%2Fmp4&rqh=1&gir=yes&clen=64132550&dur=3962.694&lmt=1760927372995427&keepalive=yes&fexp=24350737,24350827,24351316,24351318,24351528,24352001,24352157,24352539,24352916,24352918,24352960,24352981,24352983,24353009,24353011,24353029,24353031,24353128,24353227,24353229,24353287,24353289,24353697,24353699,24353795,24353797,24354011,24354013,24354131,24354133,51552689,51565115,51565681,51580968&c=ANDROID_VR&txp=4532534&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRQIgf_nEqvIW85qUmQLVUte7D3KJjR0Aksw8Ij2v19lI_SsCIQDqEGnohC-QEaaZxggefdxxiy6nJkwYAZdzr2nQbgow8Q%3D%3D&redirect_counter=1&rm=sn-i3bdl7e&rrc=104&req_id=894b5302adc6a3ee&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1760961186,&mh=zV&mip=14.178.135.43&mm=31&mn=sn-8qj-8ppe7&ms=au&mt=1760960944&mv=m&mvi=2&pcm2cms=yes&pl=25&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pcm2cms,pl,rms&lsig=APaTxxMwRgIhANAL7-TAlsV4FonaU643SG3GF3uDO4xHLvWWTIJC1lngAiEA5bkPP_vv14BVBsk4FabW_3HN4eB0WT3Pqz-ZXxr6x5Q%3D" type="audio/mp4">
+</audio>
+
+<audio id="music2" loop>
+  <source src="https://rr6---sn-8qj-8ppl.googlevideo.com/videoplayback?expire=1760976320&ei=YAn2aN6PHK_h29gPn5Tw6Aw&ip=222.252.18.89&id=o-APsoEyRd9F1X2iWx_6pka-X3yp4HTNnTm4UWvte-mM24&itag=140&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=ATw7iSVZGtKzkCI6322FZqYNmvyQdmkn7IDJWZw1yqgUaDYpqynhYL3CELo5krnv8ORih_vIpELahYEe&spc=hcYD5VkjOw3nHmOWD1tYn9xiZqlPptpMY2HrUHKzvogAIFRj3i6OpYEr&vprv=1&svpuc=1&mime=audio%2Fmp4&rqh=1&gir=yes&clen=59059444&dur=3649.224&lmt=1760862810632872&keepalive=yes&fexp=24350737,24350827,24351316,24351318,24351528,24352001,24352157,24352539,24352916,24352918,24352960,24352981,24352983,24353009,24353011,24353029,24353031,24353128,24353227,24353229,24353287,24353289,24353697,24353699,24353795,24353797,24354011,24354013,24354131,24354133,51552689,51565115,51565681,51580968&c=ANDROID_VR&txp=6318224&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRQIgSwazJ_qRmyfOyhR1WEUoH5my-YnGY9djipil_X1Kg2wCIQCDbRds2W-kA3oBAgudeGCz_TKhEf_zGjcvXNTxSODoRA%3D%3D&redirect_counter=1&rm=sn-i3b6r7e&rrc=104&req_id=28fe9b7bc22a3ee&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1760954754,&mh=8L&mip=14.178.135.43&mm=31&mn=sn-8qj-8ppl&ms=au&mt=1760954459&mv=m&mvi=6&pl=25&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAM5xsGXZbSpn6JnwYznluRO1coTUDogMDEt2kLkR5ttrAiAyIC63cnUc36-eI-dC6tkm0K85fKK-56T6YcpcSOQ4Vw%3D%3D" type="audio/mp4">
+</audio>
+
+<script>
+  // Check date first
+  const today = new Date();
+  const isValidDate = (today.getDate() === 20 && today.getMonth() === 9); // October is 9 (0-based)
+
+  if (!isValidDate) {
+    document.body.innerHTML = ''; // Clear body
+    document.getElementById('expired-message').style.display = 'flex';
+    // Stop further execution
+    throw new Error('Page expired');
+  }
+
+  const scenes = document.querySelectorAll('.scene');
+  let current_scene = 0;
+  const transitionTime = 5000; // Thời gian mỗi scene (5 giây)
+  let interval;
+
+  function showNextScene() {
+    scenes.forEach((scene, index) => {
+      scene.classList.remove('active');
+      if (index === current_scene) {
+        scene.classList.add('active');
+        // Reset fade-in animations
+        const fadeElements = scene.querySelectorAll('.fade-in');
+        fadeElements.forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight; // Trigger reflow
+          el.style.animation = '';
+        });
+      }
+    });
+
+    const next_scene = (current_scene + 1) % scenes.length;
+    if (next_scene === 0) {
+      // Không lặp lại, dừng tại scene4
+      clearInterval(interval);
+    } else {
+      current_scene = next_scene;
+    }
+  }
+
+  // Hiển thị nút tiếp tục sau loading hoàn tất (sau 3 giây)
+  setTimeout(() => {
+    document.getElementById('continue-btn').style.display = 'block';
+  }, 3000);
+
+  // Nút tiếp tục
+  document.getElementById('continue-btn').addEventListener('click', () => {
+    current_scene = 1; // Chuyển từ scene loading đến scene 1
+    showNextScene();
+    interval = setInterval(showNextScene, transitionTime);
+    music1.play().catch(error => {
+      console.log('Không thể phát nhạc 1: ', error);
+    });
+  });
+
+  // Tạo hiệu ứng hoa rơi đa dạng hơn, rực rỡ
+  for (let i = 0; i < 20; i++) {
+    const petal = document.createElement('div');
+    petal.classList.add('petal');
+    petal.style.setProperty('--left', Math.random());
+    petal.style.setProperty('--delay', Math.random());
+    petal.style.setProperty('--scale', 0.6 + Math.random() * 0.8);
+    petal.style.setProperty('--rotate', Math.random() * 360 + 'deg');
+    const colors = ['rgba(255, 105, 180, 0.8)', 'rgba(255, 20, 147, 0.7)', 'rgba(255, 182, 193, 0.9)', 'rgba(219, 112, 147, 0.8)'];
+    petal.style.background = colors[Math.floor(Math.random() * colors.length)];
+    document.body.appendChild(petal);
+  }
+
+  // Replay button
+  document.getElementById('replay-btn').addEventListener('click', () => {
+    clearInterval(interval);
+    current_scene = 0;
+    showNextScene();
+    setTimeout(() => {
+      current_scene = 1;
+      showNextScene();
+      interval = setInterval(showNextScene, transitionTime);
+    }, 3000);
+  });
+
+  // Mini game button
+  const authModal = document.getElementById('auth-modal');
+  const minigameBtn = document.getElementById('minigame-btn');
+  const authClose = document.getElementById('auth-close');
+  const authTitle = document.getElementById('auth-title');
+  const authForm = document.getElementById('auth-form');
+  const authSubmit = document.getElementById('auth-submit');
+  const switchLink = document.getElementById('switch-link');
+  const genderContainer = document.getElementById('gender-container');
+
+  let isRegister = false;
+
+  minigameBtn.addEventListener('click', () => {
+    authModal.style.display = 'flex';
+    switchToLogin();
+  });
+
+  authClose.addEventListener('click', () => {
+    authModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === authModal) {
+      authModal.style.display = 'none';
+    }
+  });
+
+  switchLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (isRegister) {
+      switchToLogin();
+    } else {
+      switchToRegister();
+    }
+  });
+
+  function switchToLogin() {
+    isRegister = false;
+    authTitle.textContent = 'Đăng nhập';
+    authSubmit.textContent = 'Đăng nhập';
+    switchLink.textContent = 'Vui lòng đăng ký tài khoản mới';
+    genderContainer.style.display = 'none';
+  }
+
+  function switchToRegister() {
+    isRegister = true;
+    authTitle.textContent = 'Đăng ký';
+    authSubmit.textContent = 'Đăng ký';
+    switchLink.textContent = 'Đã có tài khoản? Đăng nhập';
+    genderContainer.style.display = 'block';
+  }
+
+  authForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const year = parseInt(document.getElementById('year').value);
+    const gender = isRegister ? document.getElementById('gender').value : 'female'; // Default female for login, but not used
+
+    if (name && year) {
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      if (users.length >= 30 && isRegister) {
+        alert('Số lượng người tham gia đã đạt giới hạn 30 người. Bạn không thể đăng ký nữa!');
+        authModal.style.display = 'none';
+        return;
+      }
+
+      let user = users.find(u => u.name === name && u.year === year);
+
+      if (isRegister) {
+        if (localStorage.getItem('deviceCode')) {
+          alert('Không được phép tạo nhiều tài khoản trên 1 thiết bị!');
+          return;
+        }
+        if (user) {
+          alert('Tài khoản đã tồn tại!');
+          return;
+        }
+        const deviceCode = Math.floor(10000000 + Math.random() * 90000000).toString();
+        user = { name, year, gender, deviceCode, opened: false, won: false };
+        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('deviceCode', deviceCode);
+        enterMinigame(user);
+      } else {
+        if (!user) {
+          alert('Tài khoản không tồn tại! Vui lòng đăng ký tài khoản để đăng nhập.');
+          return;
+        }
+        let storedDeviceCode = localStorage.getItem('deviceCode');
+        if (storedDeviceCode && storedDeviceCode !== user.deviceCode) {
+          alert('Thiết bị này đã liên kết với tài khoản khác!');
+          return;
+        }
+        if (!storedDeviceCode) {
+          localStorage.setItem('deviceCode', user.deviceCode);
+        }
+        enterMinigame(user);
+      }
+    }
+  });
+
+  // Mini game logic
+  const minigameSection = document.getElementById('minigame');
+  const userCountSpan = document.getElementById('user-count');
+  const winnerInfo = document.getElementById('winner-info');
+  const grid = document.getElementById('grid');
+  const backBtn = document.getElementById('back-to-scenes');
+  const dialog = document.getElementById('dialog');
+  const dialogContent = document.getElementById('dialog-content');
+  const dialogClose = document.getElementById('dialog-close');
+
+  const instructionsDialog = document.getElementById('instructions-dialog');
+  const instructionsClose = document.getElementById('instructions-close');
+
+  const userListModal = document.getElementById('user-list-modal');
+  const userListClose = document.getElementById('user-list-close');
+  const userTableBody = document.querySelector('#user-table tbody');
+  const showUsersBtn = document.getElementById('show-users-btn');
+
+  let currentUser;
+  let winner = null;
+
+  instructionsClose.addEventListener('click', () => {
+    instructionsDialog.style.display = 'none';
+  });
+
+  showUsersBtn.addEventListener('click', () => {
+    displayUserList();
+    userListModal.style.display = 'flex';
+  });
+
+  userListClose.addEventListener('click', () => {
+    userListModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === userListModal) {
+      userListModal.style.display = 'none';
+    }
+  });
+
+  function displayUserList() {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    userTableBody.innerHTML = '';
+    users.forEach((user, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${user.name}</td>
+        <td>${user.year}</td>
+        <td>${user.won ? '✔' : 'X'}</td>
+      `;
+      userTableBody.appendChild(row);
+    });
+  }
+
+  function enterMinigame(user) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    if (users.length > 30) {
+      alert('Số lượng người tham gia đã đạt giới hạn 30 người. Bạn không thể chơi mini game được nữa!');
+      authModal.style.display = 'none';
+      return;
+    }
+
+    currentUser = user;
+    authModal.style.display = 'none';
+    minigameSection.style.display = 'flex';
+
+    // Dừng nhạc 1 và phát nhạc 2
+    music1.pause();
+    music2.play().catch(error => {
+      console.log('Không thể phát nhạc 2: ', error);
+    });
+
+    // Show instructions dialog
+    instructionsDialog.style.display = 'block';
+
+    // Load users and count
+    userCountSpan.textContent = users.length;
+
+    // Check for winner
+    winner = users.find(u => u.won);
+    if (winner) {
+      winnerInfo.textContent = `${winner.name} Đã nhận được phần quà hấp dẫn 🎁`;
+    } else {
+      winnerInfo.textContent = '';
+    }
+
+    // Generate grid
+    grid.innerHTML = '';
+    const contents = generateContents();
+    for (let i = 0; i < 30; i++) {
+      const square = document.createElement('div');
+      square.classList.add('square');
+      square.textContent = '?';
+      square.dataset.index = i;
+      if (user.opened) {
+        square.classList.add('opened');
+        square.textContent = 'X';
+      }
+      square.addEventListener('click', () => openSquare(square, contents[i]));
+      grid.appendChild(square);
+    }
+  }
+
+  function generateContents() {
+    const wishes = [
+      'Chúc các bạn nữ 12A6 luôn tỏa sáng như những vì sao, mang đến niềm vui và hạnh phúc cho mọi người xung quanh. Nhân ngày 20/10, chúc các bạn mãi xinh đẹp và thành công trong học tập cũng như cuộc sống!',
+      'Kính gửi các cô giáo, những người mẹ thứ hai của chúng em. Chúc các cô luôn mạnh khỏe, hạnh phúc và tiếp tục truyền đạt kiến thức quý báu cho thế hệ trẻ. Happy 20/10!',
+      'Các bạn nữ 12A6 thân mến, các bạn là những bông hoa đẹp nhất lớp. Chúc các bạn ngày 20/10 tràn đầy niềm vui, nhận được nhiều quà tặng và lời chúc từ mọi người.',
+      'Chúc các cô giáo của chúng em luôn trẻ trung, xinh đẹp và tràn đầy năng lượng. Các cô chính là nguồn cảm hứng cho chúng em vươn tới thành công. Chúc mừng ngày Phụ nữ Việt Nam!',
+      'Gửi đến các bạn nữ 12A6: Các bạn không chỉ học giỏi mà còn rất tài năng. Chúc các bạn luôn tự tin, mạnh mẽ và đạt được mọi ước mơ trong tương lai. 20/10 vui vẻ!',
+      'Kính chúc các cô giáo một ngày 20/10 ý nghĩa, nhận được sự quan tâm từ gia đình và học trò. Các cô xứng đáng với tất cả những điều tốt đẹp nhất!',
+      'Các bạn nữ 12A6 ơi, chúc các bạn luôn nở nụ cười rạng rỡ, học tập tiến bộ và có những kỷ niệm đẹp bên bạn bè. Happy Women\'s Day!',
+      'Chúc các cô giáo luôn giữ được sự dịu dàng, kiên nhẫn và yêu thương học trò. Ngày 20/10, chúng em gửi đến các cô những lời chúc chân thành nhất.',
+      'Gửi các bạn nữ 12A6: Các bạn là niềm tự hào của lớp. Chúc các bạn ngày càng xinh đẹp, thông minh và hạnh phúc bên người thân.',
+      'Kính gửi các cô, chúc các cô có một ngày 20/10 tràn đầy hoa và quà. Cảm ơn các cô vì đã luôn đồng hành cùng chúng em.',
+      'Chúc các bạn nữ 12A6 thành công trong mọi lĩnh vực, từ học tập đến tình yêu. Ngày 20/10, hãy để bản thân được chiều chuộng nhé!',
+      'Các cô giáo kính mến, chúc các cô luôn mạnh khỏe để tiếp tục sứ mệnh trồng người. Happy 20/10!',
+      'Các bạn nữ 12A6 thân yêu, chúc các bạn luôn vui vẻ, lạc quan và vượt qua mọi thử thách. Chúc mừng ngày Phụ nữ!',
+      'Chúc các cô giáo nhận được nhiều niềm vui từ học trò và gia đình. Các cô là những người phụ nữ tuyệt vời nhất!',
+      'Gửi đến các bạn nữ 12A6: Chúc các bạn có một ngày 20/10 đáng nhớ, với những bất ngờ thú vị từ bạn bè.',
+      'Kính chúc các cô luôn xinh đẹp, trẻ trung và hạnh phúc. Cảm ơn các cô vì tất cả!',
+      'Chúc các bạn nữ 12A6 học giỏi, chơi vui và luôn là chính mình. Happy Women\'s Day!',
+      'Các cô giáo ơi, chúc các cô có những giây phút thư giãn bên gia đình nhân ngày 20/10.',
+      'Các bạn nữ 12A6, chúc các bạn mãi là những cô gái dễ thương, tài giỏi và thành đạt.',
+      'Chúc các cô giáo luôn tràn đầy năng lượng tích cực và truyền cảm hứng cho chúng em.',
+      'Gửi các bạn nữ 12A6: Chúc các bạn có một tương lai sáng ngời, đầy ắp niềm vui.',
+      'Kính gửi các cô, chúc các cô ngày 20/10 nhận được nhiều lời chúc yêu thương.',
+      'Chúc các bạn nữ 12A6 luôn tự tin bước đi trên con đường mình chọn.',
+      'Các cô giáo kính mến, chúc các cô hạnh phúc viên mãn bên người thân.',
+      'Các bạn nữ 12A6 ơi, chúc các bạn ngày càng xinh đẹp và thông minh hơn nữa.',
+      'Chúc các cô giáo có một ngày đặc biệt, đầy ý nghĩa và ấm áp.',
+      'Gửi đến các bạn nữ 12A6: Chúc các bạn luôn vui khỏe và thành công.',
+      'Kính chúc các cô luôn là nguồn sáng soi đường cho chúng em.',
+      'Chúc các bạn nữ 12A6 có những kỷ niệm đẹp trong ngày 20/10 này.'
+    ];
+
+    const gift = 'Chúc mừng bạn đã nhận được phần quà 20k vui lòng chụp ảnh cái này và gửi cho tôi zalo: 0398283058 \nĐể được nhận tiền nhé 💵🤑 ';
+
+    const contents = [...wishes];
+    contents.splice(20, 0, gift); // Insert gift at index 20 (ô 21)
+
+    return contents;
+  }
+
+  function openSquare(square, content) {
+    if (currentUser.opened || square.classList.contains('opened')) {
+      return;
+    }
+
+    currentUser.opened = true;
+    square.classList.add('opened');
+    square.textContent = 'X';
+
+    dialogContent.textContent = content;
+    dialog.style.display = 'block';
+
+    if (content.includes('Chúc mừng bạn đã nhận được phần quà')) {
+      currentUser.won = true;
+      winner = currentUser;
+      winnerInfo.textContent = `${currentUser.name} Đã nhận được phần quà hấp dẫn 🎁`;
+    }
+
+    // Update users in storage
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const index = users.findIndex(u => u.name === currentUser.name && u.year === currentUser.year);
+    if (index !== -1) {
+      users[index] = currentUser;
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+  }
+
+  dialogClose.addEventListener('click', () => {
+    dialog.style.display = 'none';
+  });
+
+  backBtn.addEventListener('click', () => {
+    minigameSection.style.display = 'none';
+    // Return to scenes, perhaps resume interval if needed
+    music2.pause();
+    music1.play().catch(error => {
+      console.log('Không thể phát nhạc 1: ', error);
+    });
+  });
+
+  const music1 = document.getElementById('music1');
+  const music2 = document.getElementById('music2');
+
+  // Khởi động nhạc 1 khi người dùng tương tác với cảnh đầu
+  document.getElementById('scene0').addEventListener('click', () => {
+    music1.play().catch(error => {
+      console.log('Không thể phát nhạc 1: ', error);
+    });
+  }, {once: true});
+
+</script>
+
+</body>
+</html>
